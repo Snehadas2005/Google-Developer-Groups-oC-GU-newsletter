@@ -54,18 +54,21 @@ function TypewriterArticle({ article, showContent }) {
     }
   }, [showContent]);
 
-  const fullContent = article.content.split('\n\n').join(' ');
+  // Split content into paragraphs
+  const paragraphs = article.content.split('\n\n');
 
   return (
     <>
       <header style={styles.articleHeader}>
-        <span style={{
-          ...styles.categoryLarge,
-          opacity: visibleSections.category ? 1 : 0,
-          transition: 'opacity 0.6s ease'
-        }}>
-          {visibleSections.category && <TypewriterText text={article.category} speed={50} />}
-        </span>
+        <div style={styles.headerTop}>
+          <span style={{
+            ...styles.categoryLarge,
+            opacity: visibleSections.category ? 1 : 0,
+            transition: 'opacity 0.6s ease'
+          }}>
+            {visibleSections.category && <TypewriterText text={article.category} speed={50} />}
+          </span>
+        </div>
         
         <h1 style={{
           ...styles.articleTitleLarge,
@@ -109,24 +112,99 @@ function TypewriterArticle({ article, showContent }) {
       }}>
         <img src={article.image} alt={article.title} style={styles.featuredImg} />
         <div style={styles.imageOverlay}></div>
+        {article.imageCaption && (
+          <figcaption style={styles.imageCaption}>
+            {article.imageCaption}
+          </figcaption>
+        )}
       </figure>
 
       <div style={styles.articleBody}>
         {visibleSections.content && (
-          <div style={styles.bodyParagraph}>
-            <TypewriterText text={fullContent} speed={12} />
-            <span style={{
-              display: 'inline-block',
-              width: '2px',
-              height: '1em',
-              backgroundColor: '#6E3988',
-              marginLeft: '2px',
-              animation: 'blink 1s infinite',
-              verticalAlign: 'middle'
-            }} />
-          </div>
+          <>
+            {/* First Drop Cap Paragraph */}
+            <div style={styles.bodyParagraph}>
+              <span style={styles.dropCap}>{paragraphs[0]?.[0]}</span>
+              <TypewriterText text={paragraphs[0]?.slice(1) || ''} speed={12} />
+            </div>
+
+            {/* Middle paragraphs with optional side images */}
+            {paragraphs.slice(1, -1).map((para, idx) => (
+              <div key={idx} style={styles.bodyParagraph}>
+                <TypewriterText text={para} speed={12} />
+                
+                {/* Insert side image for every 2nd paragraph if available */}
+                {idx % 2 === 0 && article.additionalImages?.[Math.floor(idx / 2)] && (
+                  <figure style={styles.sideImage}>
+                    <img 
+                      src={article.additionalImages[Math.floor(idx / 2)].url} 
+                      alt={article.additionalImages[Math.floor(idx / 2)].alt}
+                      style={styles.sideImageImg}
+                    />
+                    {article.additionalImages[Math.floor(idx / 2)].caption && (
+                      <figcaption style={styles.sideImageCaption}>
+                        {article.additionalImages[Math.floor(idx / 2)].caption}
+                      </figcaption>
+                    )}
+                  </figure>
+                )}
+              </div>
+            ))}
+
+            {/* Last paragraph with cursor */}
+            {paragraphs.length > 1 && (
+              <div style={styles.bodyParagraph}>
+                <TypewriterText text={paragraphs[paragraphs.length - 1]} speed={12} />
+                <span style={styles.cursor} />
+              </div>
+            )}
+
+            {/* Pull Quote if available */}
+            {article.pullQuote && (
+              <blockquote style={styles.pullQuote}>
+                <div style={styles.quoteDecor}>"</div>
+                {article.pullQuote}
+                <div style={styles.quoteDecor}>"</div>
+              </blockquote>
+            )}
+          </>
         )}
       </div>
+
+      {/* Full-width image grid at the bottom */}
+      {article.galleryImages && article.galleryImages.length > 0 && (
+        <div style={styles.imageGallery}>
+          <div style={styles.galleryGrid}>
+            {article.galleryImages.map((img, idx) => (
+              <figure key={idx} style={styles.galleryItem}>
+                <img src={img.url} alt={img.alt} style={styles.galleryImg} />
+                {img.caption && (
+                  <figcaption style={styles.galleryCaption}>
+                    {img.caption}
+                  </figcaption>
+                )}
+              </figure>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Related Articles Box */}
+      <aside style={styles.relatedBox}>
+        <h3 style={styles.relatedTitle}>Related Stories</h3>
+        <div style={styles.relatedDivider}></div>
+        <ul style={styles.relatedList}>
+          {sampleArticles
+            .filter(a => a.id !== article.id)
+            .slice(0, 3)
+            .map(related => (
+              <li key={related.id} style={styles.relatedItem}>
+                <span style={styles.relatedCategory}>{related.category}</span>
+                <div style={styles.relatedArticleTitle}>{related.title}</div>
+              </li>
+            ))}
+        </ul>
+      </aside>
     </>
   );
 }
@@ -284,65 +362,28 @@ export default function NewsletterPage() {
 
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
-
         @keyframes fadeInDown {
-          from {
-            opacity: 0;
-            transform: translateY(-30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(-30px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-
         @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-
         @keyframes slideInLeft {
-          from {
-            opacity: 0;
-            transform: translateX(-50px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
+          from { opacity: 0; transform: translateX(-50px); }
+          to { opacity: 1; transform: translateX(0); }
         }
-
         @keyframes popIn {
-          from {
-            opacity: 0;
-            transform: scale(0) rotate(45deg);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1) rotate(45deg);
-          }
+          from { opacity: 0; transform: scale(0) rotate(45deg); }
+          to { opacity: 1; transform: scale(1) rotate(45deg); }
         }
-
         @keyframes blink {
-          0%, 50% {
-            opacity: 1;
-          }
-          51%, 100% {
-            opacity: 0;
-          }
+          0%, 50% { opacity: 1; }
+          51%, 100% { opacity: 0; }
         }
       `}} />
     </div>
@@ -551,12 +592,14 @@ const styles = {
   articlePage: {
     position: 'relative',
     zIndex: 2,
-    maxWidth: '800px',
+    maxWidth: '900px',
     margin: '0 auto',
-    padding: '40px',
+    padding: '40px 60px',
     backgroundColor: '#FEFAF6',
     minHeight: '100vh',
-    boxShadow: '0 0 60px rgba(107,62,94,0.15)'
+    boxShadow: '0 0 60px rgba(107,62,94,0.15)',
+    border: '3px solid #6B3E5E',
+    borderTop: 'none'
   },
   backButton: {
     fontFamily: 'Arial, sans-serif',
@@ -578,23 +621,29 @@ const styles = {
     paddingBottom: '30px',
     borderBottom: '3px solid #6E3988'
   },
+  headerTop: {
+    marginBottom: '20px'
+  },
   categoryLarge: {
     fontSize: '12px',
     textTransform: 'uppercase',
     letterSpacing: '2px',
     color: '#F08E3B',
     fontWeight: '600',
-    display: 'block',
-    marginBottom: '20px',
-    fontFamily: 'Arial, sans-serif'
+    display: 'inline-block',
+    fontFamily: 'Arial, sans-serif',
+    backgroundColor: 'rgba(240,142,59,0.1)',
+    padding: '5px 15px',
+    border: '1px solid #F08E3B'
   },
   articleTitleLarge: {
     fontFamily: '"Libre Baskerville", serif',
-    fontSize: '42px',
+    fontSize: '48px',
     fontWeight: 'bold',
     color: '#6E3988',
     marginBottom: '20px',
-    lineHeight: '1.2'
+    lineHeight: '1.2',
+    textAlign: 'center'
   },
   articleSubtitle: {
     fontFamily: '"Libre Baskerville", serif',
@@ -602,11 +651,13 @@ const styles = {
     fontStyle: 'italic',
     color: '#6B3E5E',
     marginBottom: '25px',
-    lineHeight: '1.4'
+    lineHeight: '1.4',
+    textAlign: 'center'
   },
   articleMetaLarge: {
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: '12px',
     fontSize: '13px',
     textTransform: 'uppercase',
@@ -615,7 +666,7 @@ const styles = {
     fontFamily: 'Arial, sans-serif'
   },
   featuredImage: {
-    margin: '0 0 40px 0',
+    margin: '0 0 15px 0',
     position: 'relative',
     border: '3px solid #6B3E5E',
     overflow: 'hidden'
@@ -626,15 +677,169 @@ const styles = {
     display: 'block',
     filter: 'sepia(0.25) contrast(1.1)'
   },
+  imageCaption: {
+    fontFamily: 'Arial, sans-serif',
+    fontSize: '13px',
+    fontStyle: 'italic',
+    color: '#6B3E5E',
+    padding: '10px 15px',
+    backgroundColor: 'rgba(107,62,94,0.05)',
+    borderTop: '1px solid #6B3E5E'
+  },
   articleBody: {
     fontFamily: 'Arial, sans-serif',
-    fontSize: '16px',
+    fontSize: '17px',
     lineHeight: '1.8',
-    color: '#2a2a2a'
+    color: '#2a2a2a',
+    columnCount: 2,
+    columnGap: '40px',
+    columnRule: '1px solid rgba(107,62,94,0.2)'
   },
   bodyParagraph: {
-    marginBottom: '25px',
+    marginBottom: '20px',
     textAlign: 'justify',
-    position: 'relative'
+    position: 'relative',
+    breakInside: 'avoid'
+  },
+  dropCap: {
+    float: 'left',
+    fontFamily: '"Libre Baskerville", serif',
+    fontSize: '72px',
+    lineHeight: '60px',
+    fontWeight: 'bold',
+    color: '#6E3988',
+    marginRight: '8px',
+    marginTop: '5px'
+  },
+  cursor: {
+    display: 'inline-block',
+    width: '2px',
+    height: '1em',
+    backgroundColor: '#6E3988',
+    marginLeft: '2px',
+    animation: 'blink 1s infinite',
+    verticalAlign: 'middle'
+  },
+  sideImage: {
+    float: 'right',
+    width: '45%',
+    margin: '10px 0 15px 20px',
+    border: '2px solid #6B3E5E',
+    breakInside: 'avoid'
+  },
+  sideImageImg: {
+    width: '100%',
+    height: 'auto',
+    display: 'block',
+    filter: 'sepia(0.2) contrast(1.05)'
+  },
+  sideImageCaption: {
+    fontFamily: 'Arial, sans-serif',
+    fontSize: '11px',
+    fontStyle: 'italic',
+    color: '#6B3E5E',
+    padding: '8px 10px',
+    backgroundColor: 'rgba(107,62,94,0.05)',
+    borderTop: '1px solid #6B3E5E'
+  },
+  pullQuote: {
+    fontFamily: '"Libre Baskerville", serif',
+    fontSize: '24px',
+    fontStyle: 'italic',
+    color: '#6E3988',
+    borderTop: '3px solid #6E3988',
+    borderBottom: '3px solid #6E3988',
+    padding: '30px 40px',
+    margin: '30px 0',
+    textAlign: 'center',
+    position: 'relative',
+    columnSpan: 'all',
+    breakInside: 'avoid'
+  },
+  quoteDecor: {
+    fontFamily: 'Chomsky, serif',
+    fontSize: '48px',
+    color: '#FB9F4E',
+    lineHeight: '1'
+  },
+  imageGallery: {
+    marginTop: '40px',
+    columnSpan: 'all',
+    breakInside: 'avoid'
+  },
+  galleryGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+    gap: '20px',
+    marginBottom: '40px'
+  },
+  galleryItem: {
+    border: '2px solid #6B3E5E',
+    overflow: 'hidden'
+  },
+  galleryImg: {
+    width: '100%',
+    height: '200px',
+    objectFit: 'cover',
+    display: 'block',
+    filter: 'sepia(0.2) contrast(1.05)'
+  },
+  galleryCaption: {
+    fontFamily: 'Arial, sans-serif',
+    fontSize: '11px',
+    fontStyle: 'italic',
+    color: '#6B3E5E',
+    padding: '8px 10px',
+    backgroundColor: 'rgba(107,62,94,0.05)',
+    borderTop: '1px solid #6B3E5E'
+  },
+  relatedBox: {
+    marginTop: '50px',
+    padding: '25px',
+    border: '3px solid #6E3988',
+    backgroundColor: 'rgba(110,57,136,0.05)',
+    columnSpan: 'all',
+    breakInside: 'avoid'
+  },
+  relatedTitle: {
+    fontFamily: '"Libre Baskerville", serif',
+    fontSize: '20px',
+    fontWeight: 'bold',
+    color: '#6E3988',
+    marginBottom: '15px'
+  },
+  relatedDivider: {
+    width: '60px',
+    height: '3px',
+    backgroundColor: '#F08E3B',
+    marginBottom: '20px'
+  },
+  relatedList: {
+    listStyle: 'none',
+    padding: 0,
+    margin: 0
+  },
+  relatedItem: {
+    marginBottom: '15px',
+    paddingBottom: '15px',
+    borderBottom: '1px solid rgba(107,62,94,0.2)',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease'
+  },
+  relatedCategory: {
+    fontSize: '10px',
+    textTransform: 'uppercase',
+    letterSpacing: '1px',
+    color: '#F08E3B',
+    display: 'block',
+    marginBottom: '5px',
+    fontFamily: 'Arial, sans-serif'
+  },
+  relatedArticleTitle: {
+    fontSize: '14px',
+    color: '#6E3988',
+    fontFamily: '"Libre Baskerville", serif',
+    fontWeight: 'bold',
+    lineHeight: '1.4'
   }
 };

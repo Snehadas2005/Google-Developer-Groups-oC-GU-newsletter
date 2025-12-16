@@ -3,7 +3,38 @@
 import { useState, useEffect } from 'react';
 import { sampleArticles } from '@/data/sampleArticles';
 
-function TypewriterText({ text, speed = 15, startDelay = 0 }) {
+interface Article {
+  id: string;
+  title: string;
+  subtitle?: string;
+  author: string;
+  date: string;
+  category: string;
+  excerpt: string;
+  content: string;
+  image: string;
+  imageCaption?: string;
+  featured?: boolean;
+  additionalImages?: Array<{
+    url: string;
+    alt: string;
+    caption?: string;
+  }>;
+  pullQuote?: string;
+  galleryImages?: Array<{
+    url: string;
+    alt: string;
+    caption?: string;
+  }>;
+}
+
+interface TypewriterTextProps {
+  text: string;
+  speed?: number;
+  startDelay?: number;
+}
+
+function TypewriterText({ text, speed = 15, startDelay = 0 }: TypewriterTextProps) {
   const [displayText, setDisplayText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hasStarted, setHasStarted] = useState(false);
@@ -29,7 +60,12 @@ function TypewriterText({ text, speed = 15, startDelay = 0 }) {
   return <span>{displayText}</span>;
 }
 
-function TypewriterArticle({ article, showContent }) {
+interface TypewriterArticleProps {
+  article: Article;
+  showContent: boolean;
+}
+
+function TypewriterArticle({ article, showContent }: TypewriterArticleProps) {
   const [visibleSections, setVisibleSections] = useState({
     category: false,
     title: false,
@@ -210,7 +246,7 @@ function TypewriterArticle({ article, showContent }) {
 }
 
 export default function NewsletterPage() {
-  const [selectedArticle, setSelectedArticle] = useState(null);
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [isArticleAnimating, setIsArticleAnimating] = useState(false);
   const [showContent, setShowContent] = useState(false);
   
@@ -221,7 +257,7 @@ export default function NewsletterPage() {
     day: 'numeric'
   });
 
-  const handleArticleClick = (article) => {
+  const handleArticleClick = (article: Article) => {
     setIsArticleAnimating(true);
     setSelectedArticle(article);
     setTimeout(() => {
@@ -327,13 +363,13 @@ export default function NewsletterPage() {
                 e.currentTarget.style.transform = 'translateY(-8px)';
                 e.currentTarget.style.boxShadow = '8px 8px 0 rgba(107,62,94,0.35)';
                 const img = e.currentTarget.querySelector('img');
-                if (img) img.style.transform = 'scale(1.08)';
+                if (img) (img as HTMLImageElement).style.transform = 'scale(1.08)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
                 e.currentTarget.style.boxShadow = '4px 4px 0 rgba(107,62,94,0.2)';
                 const img = e.currentTarget.querySelector('img');
-                if (img) img.style.transform = 'scale(1)';
+                if (img) (img as HTMLImageElement).style.transform = 'scale(1)';
               }}
             >
               <div style={styles.imageWrapper}>
@@ -390,7 +426,7 @@ export default function NewsletterPage() {
   );
 }
 
-const styles = {
+const styles: { [key: string]: React.CSSProperties } = {
   page: {
     minHeight: '100vh',
     backgroundColor: '#FEDBB7',
@@ -698,8 +734,7 @@ const styles = {
   bodyParagraph: {
     marginBottom: '20px',
     textAlign: 'justify',
-    position: 'relative',
-    breakInside: 'avoid'
+    position: 'relative'
   },
   dropCap: {
     float: 'left',
@@ -724,8 +759,7 @@ const styles = {
     float: 'right',
     width: '45%',
     margin: '10px 0 15px 20px',
-    border: '2px solid #6B3E5E',
-    breakInside: 'avoid'
+    border: '2px solid #6B3E5E'
   },
   sideImageImg: {
     width: '100%',
@@ -752,9 +786,7 @@ const styles = {
     padding: '30px 40px',
     margin: '30px 0',
     textAlign: 'center',
-    position: 'relative',
-    columnSpan: 'all',
-    breakInside: 'avoid'
+    position: 'relative'
   },
   quoteDecor: {
     fontFamily: 'Chomsky, serif',
@@ -763,9 +795,7 @@ const styles = {
     lineHeight: '1'
   },
   imageGallery: {
-    marginTop: '40px',
-    columnSpan: 'all',
-    breakInside: 'avoid'
+    marginTop: '40px'
   },
   galleryGrid: {
     display: 'grid',
@@ -797,9 +827,7 @@ const styles = {
     marginTop: '50px',
     padding: '25px',
     border: '3px solid #6E3988',
-    backgroundColor: 'rgba(110,57,136,0.05)',
-    columnSpan: 'all',
-    breakInside: 'avoid'
+    backgroundColor: 'rgba(110,57,136,0.05)'
   },
   relatedTitle: {
     fontFamily: '"Libre Baskerville", serif',

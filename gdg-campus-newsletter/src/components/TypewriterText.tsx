@@ -6,22 +6,18 @@ interface TypewriterTextProps {
   speed?: number;
 }
 
-export function TypewriterText({
-  text,
-  className = "",
-  speed = 0.025,
-}: TypewriterTextProps) {
+export function TypewriterText({ text, speed = 15 }: { text: string; speed?: number }) {
   return (
-    <p className={className}>
-      {text.split("").map((char, i) => (
+    <p style={{ lineHeight: '1.75', fontSize: '1rem', marginBottom: '1.5rem' }}>
+      {text.split('').map((char, i) => (
         <motion.span
           key={`${char}-${i}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{
-            delay: i * speed,
+            delay: i * (1 / speed),
             duration: 0.1,
-            ease: "linear",
+            ease: 'linear',
           }}
         >
           {char}
@@ -31,7 +27,6 @@ export function TypewriterText({
   );
 }
 
-// Alternative cursor version
 export function TypewriterWithCursor({
   text,
   className = "",

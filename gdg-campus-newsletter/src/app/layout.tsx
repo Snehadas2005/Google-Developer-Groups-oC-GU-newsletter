@@ -10,7 +10,7 @@ const libreBaskerville = Libre_Baskerville({
 });
 
 export const metadata: Metadata = {
-  title: 'GDG on Campus - Weekly Chronicle',
+  title: 'GDG on Campus Galgotias University - Weekly Chronicle',
   description: 'Vintage newspaper-style newsletter for university tech community',
 };
 

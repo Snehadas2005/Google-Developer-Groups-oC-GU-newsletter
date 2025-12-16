@@ -1,94 +1,131 @@
 @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
 @import url('https://fonts.cdnfonts.com/css/chomsky');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-@layer base {
-  body {
-    background-color: #faf8f3;
-    color: #2a2a2a;
-    font-family: Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+body {
+  font-family: Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #FEDBB7;
+  color: #2a2a2a;
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FEDBB7;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #6B3E5E;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6E3988;
+}
+
+/* Typography helpers */
+.chomsky-font {
+  font-family: 'Chomsky', serif;
+}
+
+.libre-font {
+  font-family: 'Libre Baskerville', serif;
+}
+
+.arial-font {
+  font-family: Arial, sans-serif;
+}
+
+/* Utility classes */
+.text-center {
+  text-align: center;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+/* Selection color */
+::selection {
+  background: #6E3988;
+  color: #FEDBB7;
+}
+
+::-moz-selection {
+  background: #6E3988;
+  color: #FEDBB7;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-
-  /* Article body typography */
-  .article-body p {
-    line-height: 1.75;
-    font-size: 1rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .article-body p:first-of-type::first-letter {
-    float: left;
-    font-size: 4.5rem;
-    font-family: 'Chomsky', serif;
-    font-weight: bold;
-    line-height: 0.8;
-    margin-right: 0.5rem;
-    margin-top: 0.25rem;
-    color: #2a2a2a;
-  }
-
-  /* Smooth scrollbar */
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: #faf8f3;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: #e0ddd6;
-    border-radius: 4px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: #d0cdc6;
+  to {
+    opacity: 1;
   }
 }
 
-@layer utilities {
-  /* Text truncation utilities */
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
   }
-
-  .line-clamp-4 {
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
 
-  /* Vintage newspaper effects */
-  .newspaper-texture {
-    background-image: url('/textures/paper.png');
-    background-repeat: repeat;
-    background-size: 200px 200px;
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
   }
-
-  .ink-bleed {
-    filter: contrast(1.1) brightness(0.95);
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
 
-  /* Print-inspired column layout */
-  .newspaper-columns {
-    column-count: 2;
-    column-gap: 3rem;
-    column-rule: 1px solid #e0ddd6;
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
   }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
 
-  @media (max-width: 768px) {
-    .newspaper-columns {
-      column-count: 1;
-    }
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0) rotate(45deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(45deg);
+  }
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
   }
 }

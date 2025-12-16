@@ -6,51 +6,45 @@ interface ArticleCardProps {
   onClick: () => void;
 }
 
-export function ArticleCard({ article, onClick }: ArticleCardProps) {
+export function ArticleCard({ article, onClick }: { article: Article; onClick: () => void }) {
   return (
     <motion.article
       layoutId={`article-${article.id}`}
       onClick={onClick}
-      className="relative flex-shrink-0 w-[280px] h-[360px] bg-[#faf8f3] border border-[#e0ddd6] cursor-pointer group"
+      style={{
+        position: 'relative',
+        flexShrink: 0,
+        width: '280px',
+        height: '360px',
+        backgroundColor: '#faf8f3',
+        border: '1px solid #e0ddd6',
+        cursor: 'pointer',
+        padding: '24px',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
       whileHover={{ y: -4 }}
       transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
     >
-      {/* Paper texture overlay */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none bg-[url('/textures/paper.png')] mix-blend-multiply" />
-      
-      <div className="relative p-6 h-full flex flex-col">
-        {/* Category label */}
-        <div className="mb-3">
-          <span className="text-[11px] uppercase tracking-wider text-[#6a6a6a] font-normal">
-            {article.category}
-          </span>
-        </div>
-
-        {/* Title */}
-        <h3 className="font-['Libre_Baskerville'] text-xl font-semibold leading-[1.4] mb-3 text-[#2a2a2a]">
-          {article.title}
-        </h3>
-
-        {/* Excerpt */}
-        <p className="text-sm leading-relaxed text-[#6a6a6a] mb-4 flex-grow line-clamp-4">
-          {article.excerpt}
-        </p>
-
-        {/* Meta info */}
-        <div className="border-t border-[#e0ddd6] pt-3 mt-auto">
-          <p className="text-xs uppercase tracking-wider text-[#6a6a6a]">
-            {article.author} · {article.date}
-          </p>
-        </div>
+      <div style={{ marginBottom: '12px' }}>
+        <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#6a6a6a' }}>
+          {article.category}
+        </span>
       </div>
 
-      {/* Hover shadow effect */}
-      <motion.div
-        className="absolute inset-0 shadow-lg pointer-events-none"
-        initial={{ opacity: 0 }}
-        whileHover={{ opacity: 1 }}
-        transition={{ duration: 0.4 }}
-      />
+      <h3 style={{ fontFamily: "'Libre Baskerville', serif", fontSize: '20px', fontWeight: 600, lineHeight: '1.4', marginBottom: '12px', color: '#2a2a2a' }}>
+        {article.title}
+      </h3>
+
+      <p style={{ fontSize: '14px', lineHeight: '1.6', color: '#6a6a6a', marginBottom: '16px', flex: 1, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical' }}>
+        {article.excerpt}
+      </p>
+
+      <div style={{ borderTop: '1px solid #e0ddd6', paddingTop: '12px' }}>
+        <p style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#6a6a6a' }}>
+          {article.author} · {article.date}
+        </p>
+      </div>
     </motion.article>
   );
 }

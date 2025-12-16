@@ -8,7 +8,7 @@ interface ArticlePanelProps {
   onClose: () => void;
 }
 
-export function ArticlePanel({ article, onClose }: ArticlePanelProps) {
+export function ArticlePanel({ article, onClose }: { article: Article | null; onClose: () => void }) {
   if (!article) return null;
 
   return (
@@ -23,137 +23,132 @@ export function ArticlePanel({ article, onClose }: ArticlePanelProps) {
           damping: 30,
           stiffness: 200
         }}
-        className="fixed right-0 top-0 bottom-0 w-full md:w-[700px] bg-[#faf8f3] shadow-2xl overflow-y-auto z-50"
+        style={{
+          position: 'fixed',
+          right: 0,
+          top: 0,
+          bottom: 0,
+          width: '100%',
+          maxWidth: '700px',
+          backgroundColor: '#faf8f3',
+          boxShadow: '-10px 0 50px rgba(0,0,0,0.3)',
+          overflowY: 'auto',
+          zIndex: 50,
+        }}
       >
-        {/* Paper texture overlay */}
-        <div className="absolute inset-0 opacity-10 pointer-events-none bg-[url('/textures/paper.png')] mix-blend-multiply" />
-
-        <div className="relative">
-          {/* Close button */}
+        <div style={{ position: 'relative' }}>
           <motion.button
             onClick={onClose}
-            className="absolute top-8 right-8 w-10 h-10 flex items-center justify-center bg-white/80 hover:bg-white border border-[#e0ddd6] transition-colors z-10"
-            whileHover={{ scale: 1.05 }}
+            style={{
+              position: 'absolute',
+              top: '32px',
+              right: '32px',
+              width: '40px',
+              height: '40px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'rgba(255,255,255,0.8)',
+              border: '1px solid #e0ddd6',
+              cursor: 'pointer',
+              zIndex: 10,
+            }}
+            whileHover={{ scale: 1.05, backgroundColor: '#fff' }}
             whileTap={{ scale: 0.95 }}
           >
-            <X className="w-5 h-5 text-[#2a2a2a]" />
+            ✕
           </motion.button>
 
-          {/* Content */}
-          <div className="px-12 py-16 max-w-[600px]">
-            {/* Category */}
+          <div style={{ padding: '64px 48px', maxWidth: '600px' }}>
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="mb-4"
+              style={{ marginBottom: '16px' }}
             >
-              <span className="text-xs uppercase tracking-wider text-[#6a6a6a]">
+              <span style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#6a6a6a' }}>
                 {article.category}
               </span>
             </motion.div>
 
-            {/* Title */}
             <motion.h1
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="font-['Libre_Baskerville'] text-4xl font-bold leading-tight mb-4 text-[#2a2a2a]"
+              style={{ fontFamily: "'Libre Baskerville', serif", fontSize: '36px', fontWeight: 700, lineHeight: '1.2', marginBottom: '16px', color: '#2a2a2a' }}
             >
               {article.title}
             </motion.h1>
 
-            {/* Subtitle */}
             {article.subtitle && (
               <motion.h2
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="font-['Libre_Baskerville'] text-xl text-[#6a6a6a] mb-6 leading-relaxed"
+                style={{ fontFamily: "'Libre Baskerville', serif", fontSize: '20px', color: '#6a6a6a', marginBottom: '24px', lineHeight: '1.6' }}
               >
                 {article.subtitle}
               </motion.h2>
             )}
 
-            {/* Meta */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="flex items-center gap-4 pb-6 mb-8 border-b border-[#e0ddd6]"
+              style={{ display: 'flex', alignItems: 'center', gap: '16px', paddingBottom: '24px', marginBottom: '32px', borderBottom: '1px solid #e0ddd6' }}
             >
-              <span className="text-xs uppercase tracking-wider text-[#6a6a6a]">
+              <span style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#6a6a6a' }}>
                 By {article.author}
               </span>
-              <span className="text-[#e0ddd6]">•</span>
-              <span className="text-xs uppercase tracking-wider text-[#6a6a6a]">
+              <span style={{ color: '#e0ddd6' }}>•</span>
+              <span style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#6a6a6a' }}>
                 {article.date}
               </span>
             </motion.div>
 
-            {/* First image */}
             {article.images[0] && (
               <motion.figure
                 initial={{ opacity: 0, scale: 1.05 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.6, duration: 0.6 }}
-                className="mb-10 relative"
+                style={{ marginBottom: '40px' }}
               >
-                <div className="relative overflow-hidden">
-                  <img
-                    src={article.images[0].url}
-                    alt={article.images[0].alt}
-                    className="w-full h-auto"
-                    style={{
-                      filter: 'grayscale(20%) contrast(1.1) brightness(0.95) sepia(8%)'
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-[url('/textures/paper.png')] mix-blend-multiply opacity-15" />
-                </div>
+                <img
+                  src={article.images[0].url}
+                  alt={article.images[0].alt}
+                  style={{ width: '100%', height: 'auto', filter: 'grayscale(20%) contrast(1.1) brightness(0.95) sepia(8%)' }}
+                />
                 {article.images[0].caption && (
-                  <figcaption className="mt-3 text-xs text-[#6a6a6a] italic">
+                  <figcaption style={{ marginTop: '12px', fontSize: '12px', color: '#6a6a6a', fontStyle: 'italic' }}>
                     {article.images[0].caption}
                   </figcaption>
                 )}
               </motion.figure>
             )}
 
-            {/* Body text with typewriter effect */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
-              className="article-body"
             >
-              <TypewriterText
-                text={article.content}
-                className="text-base leading-[1.75] text-[#2a2a2a] mb-6"
-                speed={0.015}
-              />
+              <TypewriterText text={article.content} />
             </motion.div>
 
-            {/* Additional images */}
             {article.images.slice(1).map((image, idx) => (
               <motion.figure
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1 + idx * 0.2 }}
-                className="my-10 relative"
+                style={{ marginTop: '40px', marginBottom: '40px' }}
               >
-                <div className="relative overflow-hidden">
-                  <img
-                    src={image.url}
-                    alt={image.alt}
-                    className="w-full h-auto"
-                    style={{
-                      filter: 'grayscale(20%) contrast(1.1) brightness(0.95) sepia(8%)'
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-[url('/textures/paper.png')] mix-blend-multiply opacity-15" />
-                </div>
+                <img
+                  src={image.url}
+                  alt={image.alt}
+                  style={{ width: '100%', height: 'auto', filter: 'grayscale(20%) contrast(1.1) brightness(0.95) sepia(8%)' }}
+                />
                 {image.caption && (
-                  <figcaption className="mt-3 text-xs text-[#6a6a6a] italic">
+                  <figcaption style={{ marginTop: '12px', fontSize: '12px', color: '#6a6a6a', fontStyle: 'italic' }}>
                     {image.caption}
                   </figcaption>
                 )}
